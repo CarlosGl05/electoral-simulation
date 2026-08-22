@@ -1,0 +1,51 @@
+# --- Entornos Virtuales y Paquetes ---
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# --- Python Cache y Compilados ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# --- Pruebas y Cobertura (pytest) ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# --- Archivos de Salida y Datasets Locales ---
+*.xlsx
+*.csv
+*.log
+*.sqlite3
+
+# --- Editores y Entornos de Desarrollo (IDEs) ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Unity (si colocas el proyecto o builds en el mismo repo) ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+*.csproj
+*.unityproj
+*.sln
+*.userprefs
