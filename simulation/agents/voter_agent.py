@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from simulation.agents.states import EstadoFuncionario, EstadoVotante
 import random
 
+import numpy as np
+from simulation.math_engine import normalizar_vector_votante, calculate_utilities, softmax, sample_vote
+from simulation.parameters import BETA_INTERCEPTS, BETA_WEIGHTS, NOMBRES_PARTIDOS
+
 @dataclass
 class VoterData:
     id: int
@@ -32,6 +36,8 @@ class Voter(Agent):
       self.tipo = "votante"
       self.tiempo_votando = 10
       self.tiempo_en_urna = 2
+
+      self.voto_seleccionado: int | None = None
     
     def step(self):
           
@@ -157,4 +163,14 @@ class Voter(Agent):
                 break
   
     def votar(self):
-        pass
+        z = normalizar_vector_votante(
+            edad=self.data.edad,
+            sexo=self.data.sexo,
+            economico=self.data.economico,
+            discapacitado=self.data.discapacitado
+        )
+        
+        # 2. Utilidad, Softmax y Muestreo Categórico
+        utilidades = calculate_utilities(z, BETA_INTERCEPTS, BETA_WEIGHTS)
+        probabilidades = softmax(utilidades)
+        self.voto_seleccionado = sample_vote(probabilidades, rng=self.model.random)
