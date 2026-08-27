@@ -23,3 +23,5 @@ if __name__ == "__main__":
     tick += 1
     
   print("\n¡Simulación terminada con éxito!")
+
+modelo.imprimir_reporte_final()

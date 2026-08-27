@@ -3,8 +3,9 @@ from simulation.agents.object_agent import Objeto
 from simulation.agents.verifier_agent import FuncionarioCasilla
 from simulation.agents.voter_agent import Voter, VoterData
 from simulation.agents.states import EstadoVotante
+from simulation.agents.BallotBox_agent import BallotBox
 import random
-
+from simulation.parameters import NOMBRES_PARTIDOS
 from mesa.space import SingleGrid
 
 class VotationModel(mesa.Model):
@@ -17,6 +18,7 @@ class VotationModel(mesa.Model):
     self.agentes_fuera = 0
     self.pool_votantes = []
     self.cola_de_llegada = []
+    self.ballot_box = None
     
     mapa = [
             [0, 0, 0, 0, 0, 0, 0, 0], 
@@ -60,8 +62,8 @@ class VotationModel(mesa.Model):
           obs = Objeto(self, (x, y), tipo="mampara")
           self.grid.place_agent(obs, (x, y))
         elif valor == 4:
-          obs = Objeto(self, (x, y), tipo="urna")
-          self.grid.place_agent(obs, (x, y))
+          self.ballot_box = BallotBox(self, (x, y))
+          self.grid.place_agent(self.ballot_box, (x, y))
   
   def step(self):
     self.agents.do("step")
@@ -106,6 +108,8 @@ class VotationModel(mesa.Model):
     print(f"  ➜ Votantes Esperando: {len(self.cola_de_llegada)}")
     print(f"  ➜ Votantes Generados: {self.votantes_generados} / {self.total_votantes}")
     print(f"  ➜ Votos en la Urna:   {self.votos}")
+    if self.ballot_box is not None:
+      print(f"  ➜ Vector Urna:        {self.ballot_box.votos.tolist()}")
     print(f"  ➜ Votantes Fuera:     {self.agentes_fuera} / {self.total_votantes}")
 
     print("\nESTADOS DE LOS AGENTES:")
@@ -127,3 +131,26 @@ class VotationModel(mesa.Model):
         print(f"  Funcionario en {agente.pos} -> {agente.estado.name}")
     print("="*39)
 
+
+
+  def imprimir_reporte_final(self):
+    print("\n" + "=" * 18 + " RESULTADOS FINALES " + "=" * 18)
+    if not self.ballot_box or self.ballot_box.total_votos == 0:
+      print("No se registraron votos en la urna.")
+      return
+
+    total = self.ballot_box.total_votos
+    print(f"Total de votos emitidos: {total}\n")
+
+    for idx, nombre in enumerate(NOMBRES_PARTIDOS):
+      conteo = int(self.ballot_box.votos[idx])
+      pct = (conteo / total) * 100
+      print(f"{nombre:<12} | {conteo:<6} | {pct:6.2f}%")
+
+    ganador_idx = int(self.ballot_box.votos.argmax())
+    print("-" * 36)
+    print(
+        f"GANADOR: {NOMBRES_PARTIDOS[ganador_idx]} con"
+        f" {self.ballot_box.votos[ganador_idx]} votos."
+    )
+    print("=" * 56 + "\n")

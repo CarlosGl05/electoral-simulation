@@ -84,6 +84,7 @@ class Voter(Agent):
       elif self.estado == EstadoVotante.COLOCANDO_VOTO:
         self.tiempo_en_urna -= 1
         if self.tiempo_en_urna <= 0:
+          self.colocar_voto()
           self.estado = EstadoVotante.IR_A_SALIDA
           self.ruta = list(ruta_a_salida)
           self.model.votos += 1
@@ -144,6 +145,19 @@ class Voter(Agent):
         diferencia_edad = abs(self.data.edad - vecino.data.edad)
         if diferencia_edad > 20:
             pass
+
+    def colocar_voto(self):
+        
+        x, y = self.pos
+        coordenada_func = (x, y - 1) 
+        
+        agentes_enfrente = self.model.grid.get_cell_list_contents([coordenada_func])
+        
+        for agente in agentes_enfrente:
+            if agente.tipo == "urna":
+              agente.recibir_voto(self.voto_seleccionado)
+              print(f"Votante {self.data.id} colocó su voto en la urna")
+            break
           
     def solicitar_atencion(self):
         print(f"Votante {self.data.id} solicitando atencion")

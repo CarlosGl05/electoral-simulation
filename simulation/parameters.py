@@ -1,7 +1,7 @@
 import numpy as np
 
 # Configuración de simulación
-N_VOTERS = 50
+N_VOTERS = 15
 N_PARTIES = 5
 
 NOMBRES_PARTIDOS = [
