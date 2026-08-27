@@ -7,7 +7,7 @@ class EstadoFuncionario(Enum):
     
 class EstadoVotante(Enum):
     INACTIVO = auto()
-    ESPERANDOO = auto()
+    ESPERANDO = auto()
     IDLE = auto()
     PLATICANDO = auto()
     IR_A_MESA = auto()

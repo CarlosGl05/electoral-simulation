@@ -2,9 +2,10 @@ import os
 import time
 import subprocess
 from simulation.model import VotationModel
+from simulation.parameters import N_VOTERS
 
 if __name__ == "__main__":
-  modelo = VotationModel(n=10)
+  modelo = VotationModel(n=N_VOTERS)
   
   subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True)
   modelo.imprimir_estado_actual(0)
