@@ -5,7 +5,8 @@ from simulation.agents.voter_agent import Voter, VoterData
 from simulation.agents.states import EstadoVotante
 from simulation.agents.BallotBox_agent import BallotBox
 import random
-from simulation.parameters import NOMBRES_PARTIDOS
+from datetime import datetime, timedelta
+from simulation.parameters import NOMBRES_PARTIDOS, TICKPERMIN
 from mesa.space import SingleGrid
 
 class VotationModel(mesa.Model):
@@ -19,6 +20,20 @@ class VotationModel(mesa.Model):
     self.pool_votantes = []
     self.cola_de_llegada = []
     self.ballot_box = None
+    
+    # Tiempo
+    
+    fecha_base = datetime(2024, 6, 2) 
+    self.hora_inicio = fecha_base.replace(hour=8, minute=0, second=0)
+    self.hora_fin = fecha_base.replace(hour=18, minute=0, second=0)
+    
+    self.hora_actual = self.hora_inicio
+    
+    self.minutos_por_tick = TICKPERMIN
+    self.current_tick = 0       
+    
+    minutos_totales = (self.hora_fin - self.hora_inicio).total_seconds() / 60
+    self.ticks_totales = int(minutos_totales / self.minutos_por_tick)
     
     mapa = [
             [0, 0, 0, 0, 0, 0, 0, 0], 
@@ -76,8 +91,14 @@ class VotationModel(mesa.Model):
         self.grid.place_agent(votante_activo, (7, 0))
         
         self.votantes_generados += 1
+        
+    self.hora_actual += timedelta(minutes=self.minutos_por_tick)
+    self.current_tick += 1
 
   def imprimir_estado_actual(self, tick):
+    hora_str = self.hora_actual.strftime("%H:%M:%S")
+    print(f"\n{'='*15} HORA {hora_str} {'='*15}")
+    
     print(f"\n{'='*15} TICK {tick} {'='*15}")
     
     print("MAPA:")
@@ -91,7 +112,7 @@ class VotationModel(mesa.Model):
         else:
           agente = celda[0]
           if agente.tipo == "votante":
-            fila_texto += f"V{agente.data.id} "
+            fila_texto += f"V{agente.data.edad} "
           elif agente.tipo == "funcionario":
             fila_texto += "F  "
           elif agente.tipo == "mampara":
@@ -116,22 +137,17 @@ class VotationModel(mesa.Model):
     for agente in self.agents:
       if agente.tipo == "votante":
         
-        # Extraemos los datos del perfil del votante
         sexo = agente.data.sexo
         edad = agente.data.edad
         nivel = agente.data.economico
         
-        # Formateamos el perfil para que se vea limpio
         perfil = f"({sexo}, {edad} años, Nivel {nivel})"
         
-        # Imprimimos toda la información junta
         print(f"  Votante {agente.data.id} {perfil} en {agente.pos} -> {agente.estado.name}")
         
       elif agente.tipo == "funcionario":
         print(f"  Funcionario en {agente.pos} -> {agente.estado.name}")
     print("="*39)
-
-
 
   def imprimir_reporte_final(self):
     print("\n" + "=" * 18 + " RESULTADOS FINALES " + "=" * 18)

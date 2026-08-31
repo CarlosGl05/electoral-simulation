@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from simulation.agents.states import EstadoFuncionario, EstadoVotante
 import random
 
-import numpy as np
 from simulation.math_engine import normalizar_vector_votante, calculate_utilities, softmax, sample_vote
 from simulation.parameters import BETA_INTERCEPTS, BETA_WEIGHTS, NOMBRES_PARTIDOS
+import math
 
 @dataclass
 class VoterData:
@@ -14,6 +14,7 @@ class VoterData:
     sexo: str
     economico: str # Nivel socioeconmico
     discapacitado: bool = False
+    ine_valido: bool = True
    
 
 # Rutas base globales
@@ -42,8 +43,9 @@ class Voter(Agent):
     def step(self):
           
       if self.estado == EstadoVotante.INACTIVO:
-        # TODO: Cambiar para que considere el vector de caracteristicas
-        if random.random() < 0.005: 
+        prob = self.activacion()
+        
+        if random.random() < prob: 
           self.estado = EstadoVotante.ESPERANDO
           self.model.cola_de_llegada.append(self)
         return
@@ -188,3 +190,28 @@ class Voter(Agent):
         utilidades = calculate_utilities(z, BETA_INTERCEPTS, BETA_WEIGHTS)
         probabilidades = softmax(utilidades)
         self.voto_seleccionado = sample_vote(probabilidades, rng=self.model.random)
+        
+    def activacion(self):
+      hora_decimal = self.model.hora_actual.hour + self.model.hora_actual.minute / 60.0
+        
+      if self.data.edad >= 60:
+          hora_pico = 9.5   # 9:30 AM (Adultos mayores prefieren la mañana)
+          desviacion = 1.5
+      elif 30 <= self.data.edad < 60:
+          hora_pico = 13.0  # 1:00 PM (Mediodía)
+          desviacion = 2.5
+      else:
+          hora_pico = 16.0  # 4:00 PM (Jóvenes prefieren la tarde)
+          desviacion = 2.0
+
+      participacion_esperada = 0.6
+           
+      C = -math.log(1 - participacion_esperada) 
+      ticks_por_hora = 60 / self.model.minutos_por_tick
+
+      factor_escala = C / (2.5066 * desviacion * ticks_por_hora)
+      probabilidad = factor_escala * math.exp(-((hora_decimal - hora_pico) ** 2) / (2 * (desviacion ** 2)))
+      
+      return probabilidad
+
+          

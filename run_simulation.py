@@ -13,7 +13,7 @@ if __name__ == "__main__":
   
   tick = 1
   
-  while modelo.agentes_fuera < modelo.total_votantes:
+  while tick < modelo.ticks_totales:
     modelo.step()
     
     subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True)

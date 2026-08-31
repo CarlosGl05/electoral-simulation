@@ -1,8 +1,9 @@
 import numpy as np
 
 # Configuración de simulación
-N_VOTERS = 15
+N_VOTERS = 100
 N_PARTIES = 5
+TICKPERMIN = 0.5 
 
 NOMBRES_PARTIDOS = [
     "MORENA",
@@ -11,6 +12,7 @@ NOMBRES_PARTIDOS = [
     "MC",
     "PVEM"
 ]
+
 
 #Popularidad inicial / Inercia de voto)
 BETA_INTERCEPTS = np.array([
@@ -31,3 +33,16 @@ BETA_WEIGHTS = np.array([
     [ -1.5,    0.3,      0.5,          0.2  ],  # MC: Fuerte atractivo en jóvenes (18-35 años) y clases medias
     [ -0.4,    0.2,     -0.2,          0.3  ]   # PVEM: Captación joven/urbana y transversal
 ])
+
+
+
+
+
+
+
+
+
+
+
+
+
