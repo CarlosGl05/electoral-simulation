@@ -10,7 +10,7 @@ from simulation.parameters import NOMBRES_PARTIDOS, TICKPERMIN
 from mesa.space import SingleGrid
 
 class VotationModel(mesa.Model):
-  def __init__(self, n=50, width=8, height=8, seed=None):
+  def __init__(self, n=50, width=10, height=10, seed=None):
     super().__init__(seed=seed)
     self.grid = SingleGrid(width, height, torus=False)
     self.total_votantes = n
@@ -36,14 +36,16 @@ class VotationModel(mesa.Model):
     self.ticks_totales = int(minutos_totales / self.minutos_por_tick)
     
     mapa = [
-            [0, 0, 0, 0, 0, 0, 0, 0], 
-            [0, 0, 3, 1, 0, 1, 4, 1], 
-            [0, 0, 0, 0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 2, 0, 0, 0], 
-            [0, 0, 1, 1, 1, 1, 0, 0], 
-            [0, 0, 0, 0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #0 es un lugar vacio
+            [0, 0, 3, 1, 0, 1, 4, 1, 0, 0], #1 es es un obstaculo
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], # 2 es el verificador
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], # 3 es la mampara
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], # 4 es la urna
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ]
     
     self.crear_votantes()
@@ -54,7 +56,7 @@ class VotationModel(mesa.Model):
       
       sexo = random.choices(["F", "M"], weights=[0.52, 0.48])[0]
       nivel_random = random.choices(["Bajo", "Medio", "Alto"], weights=[0.50, 0.35, 0.15])[0]    
-      edad = int(random.gauss(42, 15))
+      edad = int(random.gauss(55, 15))
       edad = max(18, min(edad, 90))
       
 
@@ -84,11 +86,11 @@ class VotationModel(mesa.Model):
     self.agents.do("step")
 
     if self.votantes_generados < self.total_votantes:
-      if len(self.cola_de_llegada) > 0 and self.grid.is_cell_empty((7, 0)):
+      if len(self.cola_de_llegada) > 0 and self.grid.is_cell_empty((9, 0)):
         votante_activo = self.cola_de_llegada.pop(0)
         votante_activo.estado = EstadoVotante.IR_A_MESA
         
-        self.grid.place_agent(votante_activo, (7, 0))
+        self.grid.place_agent(votante_activo, (9, 0))
         
         self.votantes_generados += 1
         
@@ -133,21 +135,7 @@ class VotationModel(mesa.Model):
       print(f"  ➜ Vector Urna:        {self.ballot_box.votos.tolist()}")
     print(f"  ➜ Votantes Fuera:     {self.agentes_fuera} / {self.total_votantes}")
 
-    print("\nESTADOS DE LOS AGENTES:")
-    for agente in self.agents:
-      if agente.tipo == "votante":
-        
-        sexo = agente.data.sexo
-        edad = agente.data.edad
-        nivel = agente.data.economico
-        
-        perfil = f"({sexo}, {edad} años, Nivel {nivel})"
-        
-        print(f"  Votante {agente.data.id} {perfil} en {agente.pos} -> {agente.estado.name}")
-        
-      elif agente.tipo == "funcionario":
-        print(f"  Funcionario en {agente.pos} -> {agente.estado.name}")
-    print("="*39)
+
 
   def imprimir_reporte_final(self):
     print("\n" + "=" * 18 + " RESULTADOS FINALES " + "=" * 18)

@@ -18,12 +18,12 @@ class VoterData:
    
 
 # Rutas base globales
-ruta_a_mesa = [(6,0), (5,0), (4, 0)]
-ruta_a_casilla = [(3,0), (2,0), (1,0), (1,1), (1,2), (1,3), (2,3), (3,3), (4,3), (5,3), (6,3), (7,3), (7,4), (7,5), (6,5), (5,5), (4,5), (3,5), (2,5), (1,5), (1,6), (1,7), (2,7)]
-ruta_a_urna = [(3,7), (4,7), (5,7), (6,7)]
+ruta_a_mesa = [(8,0), (7,0), (6,0), (5,0), (4, 0)]
+ruta_a_casilla = [(3,0), (2,0), (1,0), (1,1), (1,2), (1,3), (2,3), (3,3), (4,3), (5,3), (6,3), (7,3), (8,3), (9,3), (9,4), (8,4), (7,4), (6,4), (5,4), (4,4), (3,4), (2,4), (1,4), (1,5), (2,5), (3,5), (4,5), (5,5), (6,5), (7,5), (8,5), (9,5), (9,6), (8,6), (7,6), (6,6), (5,6), (4,6), (3,6), (2,6), (1,6), (1,7), (1,8), (1,9), (2,9)]
+ruta_a_urna = [(3,9), (4,9), (5,9), (6,9)]
 ruta_a_rechazado = [(4,0)]
-ruta_a_salida = [(6,7), (7,7)]
-ruta_a_casilla_pref = [(3,0), (2,0), (1,0), (0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (1,7), (2,7)]
+ruta_a_salida = [(6,9), (7,9), (8,9), (9,9)]
+ruta_a_casilla_pref = [(3,0), (2,0), (1,0), (0,0), (0,1), (0,2), (0,3), (0,4), (0,5), (0,6), (0,7), (0,8), (0,9), (1,9), (2,9)]
     
 
 class Voter(Agent): 
@@ -35,8 +35,8 @@ class Voter(Agent):
       
       self.ruta = list(ruta_a_mesa) 
       self.tipo = "votante"
-      self.tiempo_votando = 10
-      self.tiempo_en_urna = 2
+      self.tiempo_votando = 2
+      self.tiempo_en_urna = 1
 
       self.voto_seleccionado: int | None = None
     
@@ -99,7 +99,7 @@ class Voter(Agent):
         self.seguir_ruta()
           
       elif self.estado == EstadoVotante.IR_A_SALIDA:  
-        if len(self.ruta) == 0 and self.pos == (7,7):
+        if len(self.ruta) == 0 and self.pos == ruta_a_salida[-1]:
           self.model.agentes_fuera += 1
           self.model.grid.remove_agent(self)
           self.model.agents.remove(self)
@@ -174,7 +174,7 @@ class Voter(Agent):
                 if agente.estado == EstadoFuncionario.IDLE:
                     agente.estado = EstadoFuncionario.ATENDIENDO
                     agente.votante_actual = self
-                    agente.tiempo_atencion = 3
+                    agente.tiempo_atencion = 1
                     print(f"Funcionario atendiendo al votante {self.data.id}")
                 break
   

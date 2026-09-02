@@ -1,9 +1,9 @@
 import numpy as np
 
 # Configuración de simulación
-N_VOTERS = 100
+N_VOTERS = 380
 N_PARTIES = 5
-TICKPERMIN = 0.5 
+TICKPERMIN = 0.5
 
 NOMBRES_PARTIDOS = [
     "MORENA",
@@ -27,11 +27,11 @@ BETA_INTERCEPTS = np.array([
 # Columnas del vector z: [Edad (0 a 1), Sexo (F=1, M=0), Nivel_Económico (0 a 1), Discapacidad (1 o 0)]
 BETA_WEIGHTS = np.array([
     # [Edad,  Sexo(F), Económico, Discapacidad]
-    [  0.8,    0.2,     -1.4,          1.2  ],  # MORENA: Adultos mayores, clases populares, inclusión
-    [  0.4,   -0.1,      1.6,         -0.2  ],  # PAN: Clases medias-altas/altas, adultos
+    [  1.0,    0.2,     .2,          1.2  ],  # MORENA: Adultos mayores, clases populares, inclusión
+    [  0.4,   -0.1,      1.1,         -0.2  ],  # PAN: Clases medias-altas/altas, adultos
     [  0.9,    0.0,     -0.3,          0.1  ],  # PRI: Retención en adultos mayores tradicionales
     [ -1.5,    0.3,      0.5,          0.2  ],  # MC: Fuerte atractivo en jóvenes (18-35 años) y clases medias
-    [ -0.4,    0.2,     -0.2,          0.3  ]   # PVEM: Captación joven/urbana y transversal
+    [ -0.5,    0.1,     -0.4,          0.2  ]   # PVEM: Captación joven/urbana y transversal
 ])
 
 
