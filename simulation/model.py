@@ -97,6 +97,42 @@ class VotationModel(mesa.Model):
     self.hora_actual += timedelta(minutes=self.minutos_por_tick)
     self.current_tick += 1
 
+  def get_step_data(self, tick: int) -> dict:
+    """Retorna la posición de todos los votantes activos y métricas acumuladas del paso actual."""
+    votantes_data = []
+    for agente in self.agents:
+      if agente.tipo == "votante" and agente.pos is not None:
+        votantes_data.append({
+            "id": agente.data.id,
+            "x": agente.pos[0],
+            "y": agente.pos[1],
+            "state": agente.estado.name,
+            "sexo": agente.data.sexo,
+            "edad": agente.data.edad,
+            "discapacitado": getattr(agente.data, "discapacitado", False),
+        })
+
+    conteo_urna = (
+        self.ballot_box.votos.tolist()
+        if self.ballot_box is not None
+        else [0] * 5
+    )
+
+    return {
+        "type": "update",
+        "tick": tick,
+        "voters": votantes_data,
+        "metrics": {
+            "waiting_line": len(self.cola_de_llegada),
+            "voters_out": self.agentes_fuera,
+            "total_voters": self.total_votantes,
+            "ballot_box": conteo_urna,
+        },
+  }
+
+
+#Funciones para imprimir el estado actual del modelo y un reporte final de resultados en consolo, usadas oara pruebas previas
+'''
   def imprimir_estado_actual(self, tick):
     hora_str = self.hora_actual.strftime("%H:%M:%S")
     print(f"\n{'='*15} HORA {hora_str} {'='*15}")
@@ -158,3 +194,4 @@ class VotationModel(mesa.Model):
         f" {self.ballot_box.votos[ganador_idx]} votos."
     )
     print("=" * 56 + "\n")
+'''
