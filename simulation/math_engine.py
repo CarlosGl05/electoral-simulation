@@ -29,13 +29,12 @@ def calculate_utilities(z: np.ndarray, beta_0: np.ndarray, beta_w: np.ndarray) -
     #usa la sigmoide
     return beta_0 + np.dot(beta_w, z)
 
-
+# Vector de 5 a 1 con 1 a 0 donde 1 es afinidad por el partido
 def softmax(utilities: np.ndarray, temperature: float = 1.0) -> np.ndarray:
     #uso de la función softmax para convertir las utilidades en probabilidades de voto
     shifted = (utilities / temperature) - np.max(utilities / temperature)
     exp_u = np.exp(shifted)
     return exp_u / np.sum(exp_u)
-
 
 def sample_vote(probabilities: np.ndarray, rng) -> int:
     #muestreo de un voto basado en las probabilidades calculadas

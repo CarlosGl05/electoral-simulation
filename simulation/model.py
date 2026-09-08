@@ -18,6 +18,7 @@ class VotationModel(mesa.Model):
     self.votos = 0
     self.agentes_fuera = 0
     self.pool_votantes = []
+    self.historial_votantes = []
     self.cola_de_llegada = []
     self.ballot_box = None
     
@@ -58,11 +59,13 @@ class VotationModel(mesa.Model):
       nivel_random = random.choices(["Bajo", "Medio", "Alto"], weights=[0.50, 0.35, 0.15])[0]    
       edad = int(random.gauss(55, 15))
       edad = max(18, min(edad, 90))
+      disca = random.choices([False, True], weights=[0.95, 0.05])[0]
       
 
-      v_data = VoterData(id=i, edad=edad, sexo=sexo, economico=nivel_random)
+      v_data = VoterData(id=i, edad=edad, sexo=sexo, economico=nivel_random, discapacitado= disca)
       votante_dormido = Voter(self, None, v_data) 
       self.pool_votantes.append(votante_dormido)
+      self.historial_votantes.append(votante_dormido)
     
   def cargar_mapa(self, mapa):
     for row_idx, fila in enumerate(mapa):
@@ -132,7 +135,7 @@ class VotationModel(mesa.Model):
 
 
 #Funciones para imprimir el estado actual del modelo y un reporte final de resultados en consolo, usadas oara pruebas previas
-'''
+
   def imprimir_estado_actual(self, tick):
     hora_str = self.hora_actual.strftime("%H:%M:%S")
     print(f"\n{'='*15} HORA {hora_str} {'='*15}")
@@ -161,7 +164,7 @@ class VotationModel(mesa.Model):
             fila_texto += "█  " 
       print(fila_texto)
 
-    # --- NUEVA SECCIÓN DE ESTADÍSTICAS ---
+    '''# --- NUEVA SECCIÓN DE ESTADÍSTICAS ---
     print("\nESTADÍSTICAS GENERALES:")
     print(f"  ➜ Votantes Registrados: {len(self.pool_votantes)}")
     print(f"  ➜ Votantes Esperando: {len(self.cola_de_llegada)}")
@@ -170,9 +173,9 @@ class VotationModel(mesa.Model):
     if self.ballot_box is not None:
       print(f"  ➜ Vector Urna:        {self.ballot_box.votos.tolist()}")
     print(f"  ➜ Votantes Fuera:     {self.agentes_fuera} / {self.total_votantes}")
+'''
 
-
-
+'''
   def imprimir_reporte_final(self):
     print("\n" + "=" * 18 + " RESULTADOS FINALES " + "=" * 18)
     if not self.ballot_box or self.ballot_box.total_votos == 0:
