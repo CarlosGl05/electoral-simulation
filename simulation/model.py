@@ -175,7 +175,6 @@ class VotationModel(mesa.Model):
     print(f"  ➜ Votantes Fuera:     {self.agentes_fuera} / {self.total_votantes}")
 '''
 
-'''
   def imprimir_reporte_final(self):
     print("\n" + "=" * 18 + " RESULTADOS FINALES " + "=" * 18)
     if not self.ballot_box or self.ballot_box.total_votos == 0:
@@ -197,4 +196,3 @@ class VotationModel(mesa.Model):
         f" {self.ballot_box.votos[ganador_idx]} votos."
     )
     print("=" * 56 + "\n")
-'''
